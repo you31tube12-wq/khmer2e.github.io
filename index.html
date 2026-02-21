@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm Ra - Luxury Winner Picker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --danger: #ff4d4d;
+            --bg-dark: #050810;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; color: #fff; overflow-x: hidden;
+        }
+
+        .main-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px; padding: 40px;
+            width: 90%; max-width: 480px;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.7);
+            position: relative;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .logo { font-size: 1.8rem; font-weight: 700; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .btn-icon {
+            width: 45px; height: 45px; border-radius: 15px;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.4s;
+        }
+        .btn-icon:hover { background: var(--primary); transform: scale(1.1); }
+
+        textarea {
+            width: 100%; height: 130px; background: rgba(0,0,0,0.4);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            color: #fff; padding: 20px; font-size: 16px; outline: none;
+            box-sizing: border-box; transition: 0.3s; margin-bottom: 15px;
+            resize: none;
+        }
+        textarea:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(99,102,241,0.2); }
+
+        .button-group { display: flex; gap: 10px; margin-bottom: 25px; }
+        
+        .btn-draw {
+            flex: 3; padding: 18px; border-radius: 20px; border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff; font-size: 17px; font-weight: 700; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-draw:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4); }
+
+        .btn-clear {
+            flex: 1; padding: 18px; border-radius: 20px; border: 1px solid var(--glass-border);
+            background: var(--glass); color: #94a3b8; font-size: 17px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-clear:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; }
+
+        .winner-card {
+            background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 15px; border-radius: 15px; margin-top: 10px;
+            display: flex; align-items: center; gap: 12px; font-weight: 600; color: #4ade80;
+            animation: slideUp 0.5s ease forwards;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modal Design */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #0f172a; border: 1px solid var(--glass-border);
+            padding: 35px; border-radius: 35px; width: 340px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-content h3 { margin-bottom: 20px; font-size: 1.4rem; }
+        .modal-content input {
+            width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 15px;
+            border: 1px solid #334155; background: #070b14; color: #fff; box-sizing: border-box; outline: none;
+        }
+        .btn-modal { width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; }
+        .btn-confirm { background: var(--primary); color: #fff; margin-bottom: 10px; }
+        
+        #adminFields { display: none; margin-top: 15px; border-top: 1px solid #1e293b; padding-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <div class="header">
+        <div class="logo">I'm Ra</div>
+        <div class="btn-icon" onclick="openModal('admin')"><i class="fa-solid fa-user-shield"></i></div>
+    </div>
+
+    <textarea id="nameInput" placeholder="បញ្ចូលឈ្មោះបេក្ខជនទាំងអស់នៅទីនេះ..."></textarea>
+    
+    <div class="button-group">
+        <button class="btn-clear" onclick="clearAll()" title="Clear"><i class="fa-solid fa-trash-can"></i></button>
+        <button class="btn-draw" onclick="processDraw()">
+            <i class="fa-solid fa-bolt"></i> ចាប់អ្នកឈ្នះ ៥ នាក់
+        </button>
+    </div>
+
+    <div id="winnerResults"></div>
+</div>
+
+<div id="universalModal" class="modal-overlay">
+    <div class="modal-content" id="modalBox"></div>
+</div>
+
+<script>
+    let cheatList = [];
+    const ADMIN_CODE = "0319995568";
+
+    function openModal(type, msg = "") {
+        const overlay = document.getElementById('universalModal');
+        const box = document.getElementById('modalBox');
+        overlay.style.display = 'flex';
+
+        if (type === 'admin') {
+            box.innerHTML = `
+                <h3><i class="fa-solid fa-fingerprint" style="color:var(--primary)"></i> Admin Access</h3>
+                <input type="password" id="passInput" placeholder="បញ្ចូលលេខកូដសម្ងាត់...">
+                <button class="btn-modal btn-confirm" onclick="verifyAdmin()">ផ្ទៀងផ្ទាត់</button>
+                <div id="adminFields">
+                    <label style="display:block;text-align:left;font-size:12px;margin-bottom:8px;color:#94a3b8">កំណត់អ្នកឈ្នះ (បំបែកដោយ , )</label>
+                    <input type="text" id="lockedNames" placeholder="ឧ៖ ហេង, ដារ៉ា, សុខ">
+                    <button class="btn-modal" style="background:#22c55e;color:#fff" onclick="saveAdmin()">រក្សាទុក</button>
+                </div>
+                <p onclick="closeModal()" style="color:#64748b;font-size:13px;margin-top:15px;cursor:pointer;">បិទវិញ</p>
+            `;
+        } else if (type === 'error') {
+            box.innerHTML = `
+                <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem;color:var(--danger);margin-bottom:15px;"></i>
+                <h3>សូមពិនិត្យម្តងទៀត</h3>
+                <p style="color:#94a3b8;margin-bottom:20px;">${msg}</p>
+                <button class="btn-modal btn-confirm" onclick="closeModal()">យល់ព្រម</button>
+            `;
+        }
+    }
+
+    function closeModal() { document.getElementById('universalModal').style.display = 'none'; }
+
+    function verifyAdmin() {
+        if (document.getElementById('passInput').value === ADMIN_CODE) {
+            document.getElementById('adminFields').style.display = 'block';
+            document.getElementById('passInput').style.display = 'none';
+            document.querySelector('#modalBox button').style.display = 'none';
+        } else {
+            openModal('error', 'លេខកូដ Admin មិនត្រឹមត្រូវ!');
+        }
+    }
+
+    function saveAdmin() {
+        const val = document.getElementById('lockedNames').value;
+        cheatList = val ? val.split(',').map(s => s.trim()) : [];
+        closeModal();
+    }
+
+    function clearAll() {
+        document.getElementById('nameInput').value = "";
+        document.getElementById('winnerResults').innerHTML = "";
+    }
+
+    function processDraw() {
+        const raw = document.getElementById('nameInput').value.trim();
+        const res = document.getElementById('winnerResults');
+        let names = raw.split('\n').filter(n => n.trim() !== "");
+
+        if (names.length < 5 && cheatList.length === 0) {
+            openModal('error', 'សូមបញ្ចូលឈ្មោះឱ្យបានយ៉ាងតិច ៥ នាក់សិន!');
+            return;
+        }
+
+        res.innerHTML = `<div style="text-align:center;padding:20px;color:var(--primary);">🔍 កំពុងវិភាគស្វែងរកម្ចាស់រង្វាន់...</div>`;
+
+        setTimeout(() => {
+            res.innerHTML = "";
+            let winners = [...cheatList];
+            let pool = names.filter(n => !winners.includes(n));
+
+            while (winners.length < 5 && pool.length > 0) {
+                winners.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+            }
+
+            winners.slice(0, 5).forEach((w, i) => {
+                setTimeout(() => {
+                    const card = document.createElement('div');
+                    card.className = 'winner-card';
+                    card.innerHTML = `<i class="fa-solid fa-crown" style="color:#fbbf24"></i> <div>លេខ ${i+1}: ${w}</div>`;
+                    res.appendChild(card);
+                }, i * 500);
+            });
+        }, 1500);
+    }
+</script>
+
+</body>
+  </html>
+
